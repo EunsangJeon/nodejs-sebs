@@ -1,0 +1,12 @@
+{
+  "name": "node-book",
+  "version": "1.0.0",
+  "description": "ch05",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "eunsang",
+  "license": "ISC"
+}
