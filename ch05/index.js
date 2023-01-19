@@ -19,6 +19,6 @@ createServer((req, res) => {
 })
 
 function redirect(res, to) {
-  res.writeHead(302, { location: '/', 'content-type': 'text/plain'})
+  res.writeHead(302, { location: to, 'content-type': 'text/plain'})
   res.end('302 Redirecting to /');
 }
