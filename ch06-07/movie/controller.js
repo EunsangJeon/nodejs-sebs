@@ -1,11 +1,11 @@
+import { dirname } from 'path';
+import { fileURLToPath} from "url";
 import { get, getAll, remove, save } from "./model.js";
-import { render } from "./view.js"
 import { render as form } from "./form.js";
 
 export async function listAction(request, response) {
-  const data = await getAll();
-  const body = render(data);
-  response.send(body);
+  const movies = await getAll();
+  response.render(`${dirname(fileURLToPath(import.meta.url))}/views/list`, { movies, });
 }
 
 export async function removeAction(request, response) {

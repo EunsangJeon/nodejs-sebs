@@ -7,6 +7,8 @@ import { router as movieRouter } from './movie/index.js'
 
 const app = express();
 
+app.set('view engine', 'pug');
+
 app.use(express.static(`${dirname(fileURLToPath(import.meta.url))}/public`));
 
 app.use(morgan('common', {immediate: true}));
