@@ -1,42 +1,48 @@
-let data = [
-  {id: 1, title: 'Iron Man', year: '2008'},
-  {id: 2, title: 'Thor', year: '2011'},
-  {id: 3, title: 'Captain America', year: '2011'},
-];
+import mysql from 'mysql2/promise'
 
-export function get(id) {
-  return Promise.resolve(data.find((movie) => movie.id === id));
+const connection = await mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'topSecret',
+  database: 'movie-db',
+});
+
+await connection.connect();
+
+export async function getAll() {
+  const query = 'SELECT * FROM movies';
+  const [data] = await connection.query(query);
+  return data;
 }
 
-export function getAll() {
-  return Promise.resolve(data);
+export async function get(id) {
+  const query = 'SELECT * FROM movies WHERE id = ?';
+  const [data] = await connection.query(query, [id]);
+  return data.pop();
 }
 
-export function remove(id) {
-  data = data.filter(movie => movie.id !== id);
-  return Promise.resolve();
-}
-
-function getNextId() {
-  return Math.max(...data.map((movie) => movie.id)) + 1;
-}
-
-function insert(movie) {
-  movie.id = getNextId();
-  data.push(movie);
-}
-
-function update(movie) {
-  movie.id = parseInt(movie.id, 10);
-  const index = data.findIndex((item) => item.id === movie.id);
-  data[index] = movie;
+export async function insert(movie) {
+  const query = 'INSERT INTO movies (title, year) VALUES (?, ?)';
+  const [result] = await connection.query(query, [movie.title, movie.year]);
+  return {...movie, id: result.insertId}
 }
 
 export function save(movie) {
-  if (movie.id === '') {
-    insert(movie);
+  if (!movie.id) {
+    return insert(movie);
   } else {
-    update(movie);
+    return update(movie);
   }
-  return Promise.resolve();
+}
+
+export async function update(movie) {
+  const query = 'UPDATE movies SET title = ?, year = ? WHERE id = ?';
+  await connection.query(query, [movie.title, movie.year, movie.id]);
+  return movie;
+}
+
+export async function remove(id) {
+  const query = 'DELETE FROM movies WHERE id = ?';
+  await connection.query(query, [id]);
+  return;
 }
